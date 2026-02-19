@@ -8,16 +8,6 @@ from firebase_admin import credentials, firestore
 
 app = Flask(__name__)
 
-ALLOWED_ORIGINS = {
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost",
-    "https://harshitappq.onrender.com",
-    "capacitor://localhost",
-    "ionic://localhost",
-    "null",
-}
-
 # Initialize Firebase once (Render env var first, local file fallback).
 if not firebase_admin._apps:
     firebase_config = os.environ.get("FIREBASE_KEY")
@@ -52,14 +42,15 @@ def index():
 @app.after_request
 def add_cors_headers(response):
     origin = request.headers.get("Origin")
-    if origin in ALLOWED_ORIGINS:
+    if origin:
+        # Reflect Origin so any mobile webview/dev origin can call API.
         response.headers["Access-Control-Allow-Origin"] = origin
-    elif not origin:
+    else:
         # Non-browser/native calls may not send Origin; keep API accessible.
         response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Vary"] = "Origin"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
     response.headers["Access-Control-Max-Age"] = "86400"
     return response
 
