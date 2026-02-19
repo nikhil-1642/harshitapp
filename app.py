@@ -40,10 +40,7 @@ def _format_location(doc):
     }
 
 
-# 🌐 Home page
-@app.route("/", methods=["GET"])
-def index():
-    return render_template("index.html")
+
 
 
 # 📍 Get all saved locations
