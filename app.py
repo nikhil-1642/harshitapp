@@ -12,7 +12,12 @@ ALLOWED_ORIGINS = {
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://harshitappq.onrender.com",
+
+    # 📱 Capacitor Android / iOS
+    "capacitor://localhost",
+    "http://localhost",
 }
+
 
 # Initialize Firebase once (Render env var first, local file fallback).
 if not firebase_admin._apps:
