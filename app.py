@@ -11,13 +11,12 @@ app = Flask(__name__)
 ALLOWED_ORIGINS = {
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://harshitappq.onrender.com",
-
-    # 📱 Capacitor Android / iOS
-    "capacitor://localhost",
     "http://localhost",
+    "https://harshitappq.onrender.com",
+    "capacitor://localhost",
+    "ionic://localhost",
+    "null",
 }
-
 
 # Initialize Firebase once (Render env var first, local file fallback).
 if not firebase_admin._apps:
@@ -55,14 +54,23 @@ def add_cors_headers(response):
     origin = request.headers.get("Origin")
     if origin in ALLOWED_ORIGINS:
         response.headers["Access-Control-Allow-Origin"] = origin
+    elif not origin:
+        # Non-browser/native calls may not send Origin; keep API accessible.
+        response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Vary"] = "Origin"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Max-Age"] = "86400"
     return response
 
 
 @app.route("/api/locations", methods=["OPTIONS"])
 def locations_preflight():
+    return make_response("", 204)
+
+
+@app.route("/api/<path:_path>", methods=["OPTIONS"])
+def generic_api_preflight(_path):
     return make_response("", 204)
 
 
